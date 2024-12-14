@@ -87,13 +87,28 @@ subMenuEl.style.top = "0";
 const topMenuLinks = document.querySelectorAll('#top-menu a')
 
 // step 2
-
 topMenuEl.addEventListener('click', (e) => {
     e.preventDefault()
     console.log(e.target.localName)
     if (e.target.localName !== 'a') return
-    if (e.target.className !== 'active') {
-        
+    // if (e.target.className !== 'active') {
+
+    // 
+    console.log(e.target.textContent)
+    console.log(e.target.classList.contains("active"))
+    if (e.target.classList.contains("active")) {
+        e.target.classList.remove("active")
+    } else {
+        e.target.classList.add("active")
     }
-})
+    topMenuLinks.forEach(el => {
+    // console.log(el.textContent) // Progress Check  ↓ 
+    if (el.textContent !== e.target.textContent) // if el.textContent is not equal to the textContent of the element that triggered this event to fire
+        el.classList.remove("active") // remove the active class for all of the links EXCEPT the one we clicked on
+    });
+}) 
+// The event listener should remove the active class from each other       ↑↑↑↑↑↑↑↑↑
+// <a> element in topMenuLinks - whether the active class exists or not.
+
+
 // Part 5: Adding Submenu Interaction
