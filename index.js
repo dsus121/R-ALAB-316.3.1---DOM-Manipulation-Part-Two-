@@ -69,46 +69,92 @@ menuLinks.map(link => {
 
 // R-ALAB 316.3.1: DOM Manipulation (Part Two)
 
-// step 1
-const subMenuEl = document.getElementById("sub-menu")
-// step 2
+//step 1
+const subMenuEl = document.getElementById("sub-menu");
+//step 2
 subMenuEl.style.height = "100%";
 
 // step 3
-subMenuEl.style.backgroundColor = "var(--sub-menu-bg)"
+subMenuEl.style.backgroundColor = "var(--sub-menu-bg)";
 // step 4
 subMenuEl.classList.add("flex-around");
 
-subMenuEl.style.position = "absolute"
+subMenuEl.style.position = "absolute";
 subMenuEl.style.top = "0";
+// part 4
+// step 1
 
-// Part 4: Adding Menu Interaction
-// step 1 - update menuLinks array
-const topMenuLinks = document.querySelectorAll('#top-menu a')
+const topMenuLinks = document.querySelectorAll("#top-menu a");
 
 // step 2
-topMenuEl.addEventListener('click', (e) => {
-    e.preventDefault()
-    console.log(e.target.localName)
-    if (e.target.localName !== 'a') return
-    // if (e.target.className !== 'active') {
 
-    // 
-    console.log(e.target.textContent)
-    console.log(e.target.classList.contains("active"))
-    if (e.target.classList.contains("active")) {
-        e.target.classList.remove("active")
-    } else {
-        e.target.classList.add("active")
-    }
-    topMenuLinks.forEach(el => {
-    // console.log(el.textContent) // Progress Check  ↓ 
-    if (el.textContent !== e.target.textContent) // if el.textContent is not equal to the textContent of the element that triggered this event to fire
-        el.classList.remove("active") // remove the active class for all of the links EXCEPT the one we clicked on
+topMenuEl.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  if (e.target.localName !== "a") return;
+
+  if (e.target.className !== "active") {
+    e.target.classList.add("active");
+    // find the object of the clicked element
+    const linkObj = menuLinks.find(
+      (link) => link.text === e.target.textContent
+    );
+
+    // to select only one active link
+    topMenuLinks.forEach((topLink) => {
+      if (topLink.textContent !== e.target.textContent)
+        // if topLink.textContent is not equal to the textContent of the element that triggered this event to fire
+        topLink.classList.remove("active");
+      subMenuEl.style.top = "0"; // remove the active class for all of the links EXCEPT the one we clicked on
     });
-}) 
-// The event listener should remove the active class from each other       ↑↑↑↑↑↑↑↑↑
-// <a> element in topMenuLinks - whether the active class exists or not.
 
+    if (linkObj.subLinks) {
+      subMenuEl.style.top = "100%";
+      // using  the helper function to create sub links a elements
+      buildSubmenu(linkObj);
+    }
+  } else {
+    e.target.classList.remove("active");
+    subMenuEl.style.top = "0";
+  }
 
-// Part 5: Adding Submenu Interaction
+  // change the dom manipulation text to about if the about link is clicked
+  
+  if (e.target.textContent === 'about') {
+    mainEl.innerHTML = `<h1>${e.target.textContent}</h1>`
+}
+});
+
+// part 5 -2nd part
+
+subMenuEl.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  if (event.target.localName !== "a") return;
+
+  subMenuEl.style.top = "0";
+  topMenuLinks.forEach((topLink) => {
+    // removing active class from each top menu link
+    topLink.classList.remove("active");
+  });
+  //extracting the link text to update the h1 in main
+  const subLinkText = event.target.textContent;
+  mainEl.innerHTML = `<h1>${subLinkText
+    .charAt(0)
+    .toUpperCase()}${subLinkText.slice(1)}</h1>`;
+
+    
+});
+
+// HELPER FUNCTION
+function buildSubmenu(subLinkObj) {
+  subMenuEl.textContent = "";
+  subLinkObj.subLinks.map((subLink) => {
+    const a = document.createElement("a");
+    a.href = subLink.href;
+    a.text = subLink.text;
+    subMenuEl.appendChild(a);
+  });
+}
+
+// worked with Fouad, Priyanka, and Bryan
